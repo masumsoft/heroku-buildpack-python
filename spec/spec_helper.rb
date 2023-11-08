@@ -6,16 +6,26 @@ ENV['HATCHET_DEFAULT_STACK'] ||= 'heroku-22'
 require 'rspec/core'
 require 'hatchet'
 
-LATEST_PYTHON_3_7 = '3.7.16'
-LATEST_PYTHON_3_8 = '3.8.16'
-LATEST_PYTHON_3_9 = '3.9.16'
-LATEST_PYTHON_3_10 = '3.10.11'
-LATEST_PYTHON_3_11 = '3.11.3'
+LATEST_PYTHON_3_8 = '3.8.18'
+LATEST_PYTHON_3_9 = '3.9.18'
+LATEST_PYTHON_3_10 = '3.10.13'
+LATEST_PYTHON_3_11 = '3.11.6'
+LATEST_PYTHON_3_12 = '3.12.0'
 DEFAULT_PYTHON_VERSION = LATEST_PYTHON_3_11
 
-PIP_VERSION = '23.1.2'
-SETUPTOOLS_VERSION = '67.7.2'
-WHEEL_VERSION = '0.40.0'
+# The requirement versions are effectively buildpack constants, however, we want
+# Dependabot to be able to update them, which requires that they be in requirements
+# files. The requirements files contain contents like `package==1.2.3` (and not just
+# the package version) so we have to extract the version substring from it.
+def get_requirement_version(package_name)
+  requirement = File.read("requirements/#{package_name}.txt").strip
+  requirement.delete_prefix("#{package_name}==")
+end
+
+PIP_VERSION = get_requirement_version('pip')
+SETUPTOOLS_VERSION = get_requirement_version('setuptools')
+WHEEL_VERSION = get_requirement_version('wheel')
+PIPENV_VERSION = get_requirement_version('pipenv')
 
 # Work around the return value for `default_buildpack` changing after deploy:
 # https://github.com/heroku/hatchet/issues/180

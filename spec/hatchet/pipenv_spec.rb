@@ -2,8 +2,6 @@
 
 require_relative '../spec_helper'
 
-PIPENV_VERSION = '2023.2.4'
-
 RSpec.shared_examples 'builds using Pipenv with the requested Python version' do |python_version|
   it "builds with Python #{python_version}" do
     app.deploy do |app|
@@ -47,6 +45,10 @@ RSpec.describe 'Pipenv support' do
           remote: -----> Installing python-#{DEFAULT_PYTHON_VERSION}
           remote: -----> Installing pip #{PIP_VERSION}, setuptools #{SETUPTOOLS_VERSION} and wheel #{WHEEL_VERSION}
           remote: -----> Installing dependencies with Pipenv #{PIPENV_VERSION}
+          remote:        The flag --skip-lock has been reintroduced (but is not recommended).  Without 
+          remote:        the lock resolver it is difficult to manage multiple package indexes, and hash 
+          remote:        checking is not provided.  However it can help manage installs with current 
+          remote:        deficiencies in locking across platforms.
           remote:        Installing dependencies from Pipfile...
           remote: -----> Installing SQLite3
         OUTPUT
@@ -104,38 +106,31 @@ RSpec.describe 'Pipenv support' do
   end
 
   context 'with a Pipfile.lock containing python_version 3.7' do
-    let(:allow_failure) { false }
-    let(:app) { Hatchet::Runner.new('spec/fixtures/pipenv_python_3.7', allow_failure:) }
+    let(:app) { Hatchet::Runner.new('spec/fixtures/pipenv_python_3.7', allow_failure: true) }
 
     context 'when using Heroku-20', stacks: %w[heroku-20] do
-      it 'builds with the latest Python 3.7 but shows a deprecation warning' do
+      it 'aborts the build with an EOL message' do
         app.deploy do |app|
-          expect(clean_output(app.output)).to match(Regexp.new(<<~REGEX))
+          expect(clean_output(app.output)).to match(Regexp.new(<<~OUTPUT))
             remote: -----> Python app detected
             remote: -----> Using Python version specified in Pipfile.lock
             remote:  !     
-            remote:  !     Python 3.7 will reach its upstream end-of-life on June 27th, 2023, at which
-            remote:  !     point it will no longer receive security updates:
+            remote:  !     Python 3.7 reached upstream end-of-life on June 27th, 2023, and is
+            remote:  !     therefore no longer receiving security updates:
             remote:  !     https://devguide.python.org/versions/#supported-versions
             remote:  !     
-            remote:  !     Upgrade to a newer Python version as soon as possible to keep your app secure.
-            remote:  !     See: https://devcenter.heroku.com/articles/python-runtimes
+            remote:  !     As such, it is no longer supported by the latest version of this buildpack.
             remote:  !     
-            remote: -----> Installing python-#{LATEST_PYTHON_3_7}
-            remote: -----> Installing pip #{PIP_VERSION}, setuptools #{SETUPTOOLS_VERSION} and wheel #{WHEEL_VERSION}
-            remote: -----> Installing dependencies with Pipenv #{PIPENV_VERSION}
-            remote:        Installing dependencies from Pipfile.lock \\(.+\\)...
-            remote: -----> Installing SQLite3
-          REGEX
+            remote:  !     Please upgrade to a newer Python version. See:
+            remote:  !     https://devcenter.heroku.com/articles/python-runtimes
+            remote:  !     
+          OUTPUT
         end
       end
     end
 
     context 'when using Heroku-22', stacks: %w[heroku-22] do
-      let(:allow_failure) { true }
-
-      # Python 3.7 is in the security fix only stage of its lifecycle, so has not been built for newer stacks.
-      include_examples 'aborts the build with a runtime not available message (Pipenv)', LATEST_PYTHON_3_7
+      include_examples 'aborts the build with a runtime not available message (Pipenv)', '3.7.17'
     end
   end
 
@@ -170,19 +165,13 @@ RSpec.describe 'Pipenv support' do
   context 'with a Pipfile.lock containing python_version 3.11' do
     let(:app) { Hatchet::Runner.new('spec/fixtures/pipenv_python_3.11') }
 
-    it 'builds with the latest Python 3.11' do
-      app.deploy do |app|
-        expect(clean_output(app.output)).to match(Regexp.new(<<~REGEX))
-          remote: -----> Python app detected
-          remote: -----> Using Python version specified in Pipfile.lock
-          remote: -----> Installing python-#{LATEST_PYTHON_3_11}
-          remote: -----> Installing pip #{PIP_VERSION}, setuptools #{SETUPTOOLS_VERSION} and wheel #{WHEEL_VERSION}
-          remote: -----> Installing dependencies with Pipenv #{PIPENV_VERSION}
-          remote:        Installing dependencies from Pipfile.lock \\(.+\\)...
-          remote: -----> Installing SQLite3
-        REGEX
-      end
-    end
+    include_examples 'builds using Pipenv with the requested Python version', LATEST_PYTHON_3_11
+  end
+
+  context 'with a Pipfile.lock containing python_version 3.12' do
+    let(:app) { Hatchet::Runner.new('spec/fixtures/pipenv_python_3.12') }
+
+    include_examples 'builds using Pipenv with the requested Python version', LATEST_PYTHON_3_12
   end
 
   context 'with a Pipfile.lock containing python_full_version 3.10.7' do
@@ -308,7 +297,7 @@ RSpec.describe 'Pipenv support' do
           remote: -----> Installing python-#{DEFAULT_PYTHON_VERSION}
           remote: -----> Installing pip #{PIP_VERSION}, setuptools #{SETUPTOOLS_VERSION} and wheel #{WHEEL_VERSION}
           remote: -----> Installing dependencies with Pipenv #{PIPENV_VERSION}
-          remote:        Your Pipfile.lock \\(.+\\) is out of date. Expected: \\(.+\\).
+          remote:        Your Pipfile.lock \\(.+\\) is out of date.  Expected: \\(.+\\).
           remote:        .+
           remote:        ERROR:: Aborting deploy
         REGEX

@@ -2,12 +2,294 @@
 
 ## [Unreleased]
 
+- Updated uv from 0.7.3 to 0.7.5. ([#1800](https://github.com/heroku/heroku-buildpack-python/pull/1800))
+
+## [v286] - 2025-05-13
+
+- Added support for the package manager uv. ([#1791](https://github.com/heroku/heroku-buildpack-python/pull/1791))
+
+## [v285] - 2025-05-08
+
+- Improved internal buildpack metrics handling of attributes that contain newline characters. ([#1792](https://github.com/heroku/heroku-buildpack-python/pull/1792))
+
+## [v284] - 2025-05-06
+
+- Fixed parsing of `runtime.txt` and `.python-version` files that contain CRLF characters. ([#1789](https://github.com/heroku/heroku-buildpack-python/pull/1789))
+
+## [v283] - 2025-05-06
+
+- Added a warning when an app doesn't specify a Python version and instead relies upon the default/cached version. ([#1787](https://github.com/heroku/heroku-buildpack-python/pull/1787))
+- Improved the instructions for migrating from `runtime.txt` to `.python-version`. ([#1783](https://github.com/heroku/heroku-buildpack-python/pull/1783))
+- Improved the error messages shown when `.python-version`, `runtime.txt` or `Pipfile.lock` contain an invalid Python version. ([#1783](https://github.com/heroku/heroku-buildpack-python/pull/1783) and [#1786](https://github.com/heroku/heroku-buildpack-python/pull/1786))
+- Improved the rendering of the error message shown when `.python-version` or `runtime.txt` contain stray invisible characters (such as ASCII control codes). ([#1783](https://github.com/heroku/heroku-buildpack-python/pull/1783))
+- Improved the upgrade instructions shown for EOL and unsupported Python versions. ([#1783](https://github.com/heroku/heroku-buildpack-python/pull/1783) and [#1786](https://github.com/heroku/heroku-buildpack-python/pull/1786))
+- Improved the error messages shown when no Python package manager files are found. ([#1787](https://github.com/heroku/heroku-buildpack-python/pull/1787))
+
+## [v282] - 2025-05-02
+
+- Removed support for Heroku-20. ([#1778](https://github.com/heroku/heroku-buildpack-python/pull/1778))
+
+## [v281] - 2025-04-08
+
+- The Python 3.13 version alias now resolves to Python 3.13.3. ([#1775](https://github.com/heroku/heroku-buildpack-python/pull/1775))
+- The Python 3.12 version alias now resolves to Python 3.12.10. ([#1775](https://github.com/heroku/heroku-buildpack-python/pull/1775))
+- The Python 3.11 version alias now resolves to Python 3.11.12. ([#1775](https://github.com/heroku/heroku-buildpack-python/pull/1775))
+- The Python 3.10 version alias now resolves to Python 3.10.17. ([#1775](https://github.com/heroku/heroku-buildpack-python/pull/1775))
+- The Python 3.9 version alias now resolves to Python 3.9.22. ([#1775](https://github.com/heroku/heroku-buildpack-python/pull/1775))
+
+## [v280] - 2025-04-08
+
+- Updated pip from 24.3.1 to 25.0.1. ([#1759](https://github.com/heroku/heroku-buildpack-python/pull/1759))
+- Updated Poetry from 2.1.1 to 2.1.2. ([#1772](https://github.com/heroku/heroku-buildpack-python/pull/1772))
+
+## [v279] - 2025-02-26
+
+- Updated Poetry from 2.0.1 to 2.1.1. ([#1758](https://github.com/heroku/heroku-buildpack-python/pull/1758))
+- Stopped filtering out pip's `Requirement already satisfied:` log lines when installing dependencies. ([#1765](https://github.com/heroku/heroku-buildpack-python/pull/1765))
+- Improved the error messages shown if installing pip/Poetry/Pipenv fails. ([#1764](https://github.com/heroku/heroku-buildpack-python/pull/1764))
+- Stopped installing pip into Poetry's virtual environment. ([#1761](https://github.com/heroku/heroku-buildpack-python/pull/1761))
+
+## [v278] - 2025-02-24
+
+- Added build-time rewriting of editable VCS dependency paths (in addition to the existing run-time rewriting), to work around an upstream Pipenv bug with editable VCS dependencies not being reinstalled correctly for cached builds. ([#1756](https://github.com/heroku/heroku-buildpack-python/pull/1756))
+- Changed the location of repositories for editable VCS dependencies when using pip and Pipenv, to improve build performance and match the behaviour when using Poetry. ([#1753](https://github.com/heroku/heroku-buildpack-python/pull/1753))
+
+## [v277] - 2025-02-17
+
+- Improved the warning message shown when the requested Python version is not the latest patch version. ([#1749](https://github.com/heroku/heroku-buildpack-python/pull/1749))
+- Improved the error message shown when the requested Python patch version isn't available. ([#1749](https://github.com/heroku/heroku-buildpack-python/pull/1749))
+- Improved the error message shown if there was a networking or server related error downloading Python. ([#1749](https://github.com/heroku/heroku-buildpack-python/pull/1749))
+- Adjusted the curl options used when downloading Python to set a maximum download time of 120s to prevent hanging builds in the case of network issues. ([#1749](https://github.com/heroku/heroku-buildpack-python/pull/1749))
+- Refactored the Python download step to avoid an unnecessary version check `HEAD` request to S3 prior to downloading Python or reusing a cached install. ([#1749](https://github.com/heroku/heroku-buildpack-python/pull/1749))
+- Updated the `runtime.txt` deprecation warning to include a link to the deprecation changelog post. ([#1747](https://github.com/heroku/heroku-buildpack-python/pull/1747))
+- Improved buildpack metrics for Python version selection. ([#1749](https://github.com/heroku/heroku-buildpack-python/pull/1749))
+- Improved buildpack metrics for builds that fail. ([#1746](https://github.com/heroku/heroku-buildpack-python/pull/1746) and [#1749](https://github.com/heroku/heroku-buildpack-python/pull/1749))
+
+## [v276] - 2025-02-05
+
+- The Python 3.13 version alias now resolves to Python 3.13.2. ([#1744](https://github.com/heroku/heroku-buildpack-python/pull/1744))
+- The Python 3.12 version alias now resolves to Python 3.12.9. ([#1744](https://github.com/heroku/heroku-buildpack-python/pull/1744))
+- Deprecated support for the `runtime.txt` file. ([#1743](https://github.com/heroku/heroku-buildpack-python/pull/1743))
+- Improved the error messages shown when `.python-version`, `runtime.txt` or `Pipfile.lock` contain an invalid Python version. ([#1743](https://github.com/heroku/heroku-buildpack-python/pull/1743))
+
+## [v275] - 2025-01-13
+
+- Updated Poetry from 1.8.5 to 2.0.1. ([#1734](https://github.com/heroku/heroku-buildpack-python/pull/1734))
+
+## [v274] - 2025-01-08
+
+- Added a deprecation warning for Python 3.9. ([#1732](https://github.com/heroku/heroku-buildpack-python/pull/1732))
+- Removed support for Python 3.8. ([#1732](https://github.com/heroku/heroku-buildpack-python/pull/1732))
+- Improved the error messages shown for EOL or unrecognised major Python versions. ([#1732](https://github.com/heroku/heroku-buildpack-python/pull/1732))
+
+## [v273] - 2025-01-03
+
+- Added more Python project related file and directory names to the list recognised by buildpack detection. ([#1729](https://github.com/heroku/heroku-buildpack-python/pull/1729))
+- Improved the file listing in the error messages shown when buildpack detection fails or when no Python package manager files are found. ([#1728](https://github.com/heroku/heroku-buildpack-python/pull/1728))
+
+## [v272] - 2024-12-13
+
+- Added a warning if the Python buildpack has been run multiple times in the same build. In January 2025 this warning will be made an error. ([#1724](https://github.com/heroku/heroku-buildpack-python/pull/1724))
+- Added a warning if an existing `.heroku/python/` directory is found in the app source. In January 2025 this warning will be made an error. ([#1724](https://github.com/heroku/heroku-buildpack-python/pull/1724))
+- Improved the error message shown if the buildpack is used on an unsupported stack. ([#1724](https://github.com/heroku/heroku-buildpack-python/pull/1724))
+- Fixed Dev Center links to reflect recent article URL changes. ([#1723](https://github.com/heroku/heroku-buildpack-python/pull/1723))
+- Added metrics for the existence of a uv lockfile. ([#1725](https://github.com/heroku/heroku-buildpack-python/pull/1725))
+
+## [v271] - 2024-12-12
+
+- Updated the Python 3.8 EOL warning message with the new sunset date. ([#1721](https://github.com/heroku/heroku-buildpack-python/pull/1721))
+- Improved the error message shown when pip install fails due to pip rejecting a package with invalid version metadata. ([#1718](https://github.com/heroku/heroku-buildpack-python/pull/1718))
+- Improved the error message shown when the copy of pip bundled in the `ensurepip` module cannot be found. ([#1720](https://github.com/heroku/heroku-buildpack-python/pull/1720))
+
+## [v270] - 2024-12-10
+
+- Changed the default Python version for new apps from 3.12 to 3.13. ([#1715](https://github.com/heroku/heroku-buildpack-python/pull/1715))
+- Changed Python version pinning behaviour for apps that do not specify a Python version. Repeat builds are now pinned to the major Python version only (`3.X`) instead of the full Python version (`3.X.Y`), so that they always use the latest patch version. ([#1714](https://github.com/heroku/heroku-buildpack-python/pull/1714))
+- Updated Poetry from 1.8.4 to 1.8.5. ([#1716](https://github.com/heroku/heroku-buildpack-python/pull/1716))
+
+## [v269] - 2024-12-04
+
+- The Python 3.13 version alias now resolves to Python 3.13.1. ([#1712](https://github.com/heroku/heroku-buildpack-python/pull/1712))
+- The Python 3.12 version alias now resolves to Python 3.12.8. ([#1712](https://github.com/heroku/heroku-buildpack-python/pull/1712))
+- The Python 3.11 version alias now resolves to Python 3.11.11. ([#1712](https://github.com/heroku/heroku-buildpack-python/pull/1712))
+- The Python 3.10 version alias now resolves to Python 3.10.16. ([#1712](https://github.com/heroku/heroku-buildpack-python/pull/1712))
+- The Python 3.9 version alias now resolves to Python 3.9.21. ([#1712](https://github.com/heroku/heroku-buildpack-python/pull/1712))
+
+## [v268] - 2024-12-04
+
+- Updated pip from 24.0 to 24.3.1. ([#1685](https://github.com/heroku/heroku-buildpack-python/pull/1685))
+- Updated wheel from 0.44.0 to 0.45.1. ([#1707](https://github.com/heroku/heroku-buildpack-python/pull/1707))
+
+## [v267] - 2024-11-12
+
+- Deprecated using Pipenv without a lockfile (`Pipfile.lock`). ([#1695](https://github.com/heroku/heroku-buildpack-python/pull/1695))
+- Fixed Poetry venv creation when using an outdated Python version whose `ensurepip` module doesn't enable isolated mode, and the app's build directory contents shadows a package imported by pip (such as `brotli`). ([#1698](https://github.com/heroku/heroku-buildpack-python/pull/1698))
+
+## [v266] - 2024-11-08
+
+- Added a warning when the files for multiple package managers are found. In the future this warning will become an error. ([#1692](https://github.com/heroku/heroku-buildpack-python/pull/1692))
+- Updated the build log message shown when installing dependencies to include the package manager command being run. ([#1689](https://github.com/heroku/heroku-buildpack-python/pull/1689))
+- Changed test dependency installation on Heroku CI to now install `requirements.txt` and `requirements-test.txt` in a single `pip install` invocation rather than separately. This allows pip's resolver to resolve any version conflicts between the two files. ([#1689](https://github.com/heroku/heroku-buildpack-python/pull/1689))
+- Improved the error messages and buildpack metrics for package manager related failures. ([#1689](https://github.com/heroku/heroku-buildpack-python/pull/1689))
+- Improved the build log output, error messages and buildpack failure metrics for the NLTK downloader feature. ([#1690](https://github.com/heroku/heroku-buildpack-python/pull/1690))
+
+## [v265] - 2024-11-06
+
+- Fixed Poetry installation when using outdated patch versions of Python 3.8, 3.9 and 3.10, whose bundled pip doesn't support the `--python` option. ([#1687](https://github.com/heroku/heroku-buildpack-python/pull/1687))
+
+## [v264] - 2024-11-06
+
+- Added support for the package manager Poetry. Apps must have a `pyproject.toml` + `poetry.lock` and no other package manager files (otherwise pip/Pipenv will take precedence for backwards compatibility). ([#1682](https://github.com/heroku/heroku-buildpack-python/pull/1682))
+
+## [v263] - 2024-10-31
+
+- Fixed cache handling so that it now also discards the cache when the package manager (or its version) changes. ([#1679](https://github.com/heroku/heroku-buildpack-python/pull/1679))
+- Improved the build log output shown when restoring or discarding the cache. For example, if the cache was invalidated all reasons are now shown. ([#1679](https://github.com/heroku/heroku-buildpack-python/pull/1679))
+- Stopped performing unnecessary cache file copies when the cache is due to be invalidated. This required moving the cache restoration step to after the `bin/pre_compile` hook runs. ([#1679](https://github.com/heroku/heroku-buildpack-python/pull/1679))
+- Fixed cache restoration in the case where an app's `requirements.txt` was formerly a symlink. ([#1679](https://github.com/heroku/heroku-buildpack-python/pull/1679))
+- Added buildpack metrics for the status of the cache and duration of cache restoration/saving. ([#1679](https://github.com/heroku/heroku-buildpack-python/pull/1679))
+
+## [v262] - 2024-10-25
+
+- Updated buildpack-generated warning messages to use colour and be more consistently formatted. ([#1666](https://github.com/heroku/heroku-buildpack-python/pull/1666))
+- Improved build log output and error messages for the `bin/pre_compile` and `bin/post_compile` customisation hooks. ([#1667](https://github.com/heroku/heroku-buildpack-python/pull/1667))
+
+## [v261] - 2024-10-14
+
+- Added support for configuring the Python version using a `.python-version` file. Both the `3.N` and `3.N.N` version forms are supported (the former is recommended). The existing `runtime.txt` file will take precedence if both files are found, however, we recommend switching to `.python-version` since it is more commonly supported in the Python ecosystem. ([#1664](https://github.com/heroku/heroku-buildpack-python/pull/1664))
+- Added support for specifying only the Python major version in `runtime.txt` instead of requiring the full Python version (for example `python-3.N` instead of `python-3.N.N`). ([#1664](https://github.com/heroku/heroku-buildpack-python/pull/1664))
+
+## [v260] - 2024-10-10
+
+- Added support for Python 3.13. ([#1661](https://github.com/heroku/heroku-buildpack-python/pull/1661))
+- Removed the `idle3` and `pydoc3` scripts since they do not work with relocated Python and so have been broken for some time. Invoke them via their modules instead (e.g. `python -m pydoc`). ([#1661](https://github.com/heroku/heroku-buildpack-python/pull/1661))
+
+## [v259] - 2024-10-09
+
+- Improved build log output about the detected Python version. ([#1658](https://github.com/heroku/heroku-buildpack-python/pull/1658))
+- Improved error messages shown when the requested Python version is not a valid version string or is for an unknown/non-existent major Python version. ([#1658](https://github.com/heroku/heroku-buildpack-python/pull/1658))
+- Improved error messages shown when `Pipfile.lock` is not valid JSON. ([#1658](https://github.com/heroku/heroku-buildpack-python/pull/1658))
+- Fixed invalid Python versions being silently ignored when they were specified via the `python_version` field in `Pipfile.lock`. ([#1658](https://github.com/heroku/heroku-buildpack-python/pull/1658))
+- Added support for Python 3.9 on Heroku-24. ([#1656](https://github.com/heroku/heroku-buildpack-python/pull/1656))
+- Added buildpack metrics for use of outdated Python patch versions and occurrences of internal errors. ([#1657](https://github.com/heroku/heroku-buildpack-python/pull/1657))
+- Improved the robustness of buildpack error handling by enabling `inherit_errexit`. ([#1655](https://github.com/heroku/heroku-buildpack-python/pull/1655))
+
+## [v258] - 2024-10-01
+
+- Added support for Python 3.12.7. ([#1650](https://github.com/heroku/heroku-buildpack-python/pull/1650))
+- Changed the default Python version for new apps from 3.12.6 to 3.12.7. ([#1650](https://github.com/heroku/heroku-buildpack-python/pull/1650))
+- Fixed Django collectstatic debug output being shown if `DEBUG_COLLECTSTATIC` was set to `0` or the empty string. ([#1646](https://github.com/heroku/heroku-buildpack-python/pull/1646))
+- Stopped adding a trailing `:` to `C_INCLUDE_PATH`, `CPLUS_INCLUDE_PATH`, `LIBRARY_PATH`, `LD_LIBRARY_PATH` and `PKG_CONFIG_PATH`. ([#1645](https://github.com/heroku/heroku-buildpack-python/pull/1645))
+- Removed remnants of the unused `.heroku/vendor/` directory. ([#1644](https://github.com/heroku/heroku-buildpack-python/pull/1644))
+
+## [v257] - 2024-09-24
+
+- Moved the SQLite3 install step prior to installing dependencies when using Pipenv. This now matches the behaviour when using pip and allows dependencies to actually use the headers. ([#1640](https://github.com/heroku/heroku-buildpack-python/pull/1640))
+- Stopped exposing the `SKIP_PIP_INSTALL` env var to `bin/post_compile` and other subprocesses when using Pipenv. ([#1640](https://github.com/heroku/heroku-buildpack-python/pull/1640))
+- Stopped creating `.heroku/python/requirements-{declared,installed}.txt` files when using pip. ([#1640](https://github.com/heroku/heroku-buildpack-python/pull/1640))
+- Stopped creating a placeholder `requirements.txt` file when an app only has a `setup.py` file and no other package manager files. Instead pip is now invoked directly using `--editable .`. ([#1640](https://github.com/heroku/heroku-buildpack-python/pull/1640))
+- Improved buildpack metrics for package manager detection and duration of install steps. ([#1640](https://github.com/heroku/heroku-buildpack-python/pull/1640))
+- Updated buildpack-generated error messages to use colour and be more consistently formatted. ([#1639](https://github.com/heroku/heroku-buildpack-python/pull/1639))
+
+## [v256] - 2024-09-07
+
+- Added support for Python 3.8.20, 3.9.20, 3.10.15, 3.11.10 and 3.12.6. ([#1632](https://github.com/heroku/heroku-buildpack-python/pull/1632))
+- Changed the default Python version for new apps from 3.12.5 to 3.12.6. ([#1632](https://github.com/heroku/heroku-buildpack-python/pull/1632))
+- Updated wheel from 0.43.0 to 0.44.0. ([#1629](https://github.com/heroku/heroku-buildpack-python/pull/1629))
+
+## [v255] - 2024-08-07
+
+- Added support for Python 3.12.5. ([#1622](https://github.com/heroku/heroku-buildpack-python/pull/1622))
+- Changed the default Python version for new apps from 3.12.4 to 3.12.5. ([#1622](https://github.com/heroku/heroku-buildpack-python/pull/1622))
+
+## [v254] - 2024-07-16
+
+- Updated setuptools from 69.2.0 to 70.3.0. ([#1614](https://github.com/heroku/heroku-buildpack-python/pull/1614))
+- Updated pipenv from 2023.12.1 to 2024.0.1. ([#1601](https://github.com/heroku/heroku-buildpack-python/pull/1601))
+
+## [v253] - 2024-07-01
+
+- Improved the error messages shown when an app is missing the necessary Python package manager files. ([#1608](https://github.com/heroku/heroku-buildpack-python/pull/1608))
+
+## [v252] - 2024-06-17
+
+- Removed export of `Pipfile.lock` to `requirements.txt` during the build. ([#1593](https://github.com/heroku/heroku-buildpack-python/pull/1593))
+- Removed internal `pipenv-to-pip` script that was unintentionally exposed onto `PATH`. ([#1593](https://github.com/heroku/heroku-buildpack-python/pull/1593))
+- Stopped exposing the internal `BIN_DIR`, `BPLOG_PREFIX`, `EXPORT_PATH` and `PROFILE_PATH` environment variables to `bin/{pre,post}_compile` and other subprocesses. ([#1595](https://github.com/heroku/heroku-buildpack-python/pull/1595) and [#1597](https://github.com/heroku/heroku-buildpack-python/pull/1597))
+- Implemented the `bin/report` build report API and removed log based metrics. ([#1597](https://github.com/heroku/heroku-buildpack-python/pull/1597))
+
+## [v251] - 2024-06-07
+
+- Added support for Python 3.12.4. ([#1591](https://github.com/heroku/heroku-buildpack-python/pull/1591))
+- Changed the default Python version for new apps from 3.12.3 to 3.12.4. ([#1591](https://github.com/heroku/heroku-buildpack-python/pull/1591))
+
+## [v250] - 2024-04-26
+
+- Added support for Heroku-24. ([#1575](https://github.com/heroku/heroku-buildpack-python/pull/1575))
+
+## [v249] - 2024-04-18
+
+- Improved the error message shown for EOL Python versions when using a stack for which those versions were never built. ([#1570](https://github.com/heroku/heroku-buildpack-python/pull/1570))
+- Fixed the "Python security update is available" warning being shown when the requested version is newer than the latest version known to the buildpack. ([#1569](https://github.com/heroku/heroku-buildpack-python/pull/1569))
+- Fixed glibc warnings seen when downgrading the stack version. ([#1568](https://github.com/heroku/heroku-buildpack-python/pull/1568))
+- Changed compression format and S3 URL for Python runtime archives. ([#1567](https://github.com/heroku/heroku-buildpack-python/pull/1567))
+- Adjusted compiler options used to build Python for improved parity with the Docker Hub Python images. ([#1566](https://github.com/heroku/heroku-buildpack-python/pull/1566))
+- Excluded `LD_LIBRARY_PATH` and `PYTHONHOME` app config vars when invoking subprocesses during the build. ([#1565](https://github.com/heroku/heroku-buildpack-python/pull/1565))
+
+## [v248] - 2024-04-09
+
+- Added support for Python 3.12.3. ([#1560](https://github.com/heroku/heroku-buildpack-python/pull/1560))
+- Changed the default Python version for new apps from 3.12.2 to 3.12.3. ([#1560](https://github.com/heroku/heroku-buildpack-python/pull/1560))
+
+## [v247] - 2024-04-08
+
+- Added support for Python 3.11.9. ([#1558](https://github.com/heroku/heroku-buildpack-python/pull/1558))
+
+## [v246] - 2024-03-25
+
+- Updated pip from 23.3.2 to 24.0. ([#1541](https://github.com/heroku/heroku-buildpack-python/pull/1541))
+- Updated setuptools from 68.2.2 to 69.2.0. ([#1553](https://github.com/heroku/heroku-buildpack-python/pull/1553))
+- Updated wheel from 0.42.0 to 0.43.0. ([#1550](https://github.com/heroku/heroku-buildpack-python/pull/1550))
+- Updated pipenv from 2023.11.15 to 2023.12.1. ([#1540](https://github.com/heroku/heroku-buildpack-python/pull/1540))
+
+## [v245] - 2024-03-21
+
+- Added support for Python 3.8.19, 3.9.19 and 3.10.14. ([#1551](https://github.com/heroku/heroku-buildpack-python/pull/1551))
+
+## [v244] - 2024-03-13
+
+- Improved the automatic `WEB_CONCURRENCY` feature: ([#1547](https://github.com/heroku/heroku-buildpack-python/pull/1547))
+  - Switched to a dynamic calculation based on dyno CPU cores and memory instead of a hardcoded mapping.
+  - Decreased default concurrency on `performance-m` / `private-m` / `shield-m` dynos from `8` to `5`.
+  - Increased default concurrency on `performance-l` / `private-l` / `shield-l` dynos from `11` to `17`.
+  - Added logging of memory/CPU/concurrency information to the app logs (for web dynos only).
+
+## [v243] - 2024-02-07
+
+- Added support for Python 3.11.8 and 3.12.2. ([#1538](https://github.com/heroku/heroku-buildpack-python/pull/1538)).
+- Changed the default Python version for new apps from 3.12.1 to 3.12.2. ([#1538](https://github.com/heroku/heroku-buildpack-python/pull/1538))
+
+## [v242] - 2024-01-11
+
+- Updated pip from 23.3.1 to 23.3.2. ([#1524](https://github.com/heroku/heroku-buildpack-python/pull/1524))
+- Fixed repeat/cached Pipenv builds of local `file =` dependencies. ([#1526](https://github.com/heroku/heroku-buildpack-python/pull/1526))
+- Fixed the caching of editable VCS Pipenv dependency repositories. ([#1528](https://github.com/heroku/heroku-buildpack-python/pull/1528))
+
+## [v241] - 2023-12-08
+
+- Changed the default Python version for new apps from Python 3.11 to Python 3.12. ([#1516](https://github.com/heroku/heroku-buildpack-python/pull/1516)).
+- Added support for Python 3.11.7 and 3.12.1. ([#1517](https://github.com/heroku/heroku-buildpack-python/pull/1517) and [#1518](https://github.com/heroku/heroku-buildpack-python/pull/1518)).
+- Added a deprecation warning for Python 3.8. ([#1515](https://github.com/heroku/heroku-buildpack-python/pull/1515))
+
+## [v240] - 2023-11-30
+
 - Updated setuptools from 68.0.0 to 68.2.2. ([#1501](https://github.com/heroku/heroku-buildpack-python/pull/1501))
-- Updated pipenv from 2023.7.23 to 2023.10.24. ([#1502](https://github.com/heroku/heroku-buildpack-python/pull/1502))
+- Updated wheel from 0.41.3 to 0.42.0. ([#1511](https://github.com/heroku/heroku-buildpack-python/pull/1511))
+- Updated pipenv from 2023.7.23 to 2023.11.15. ([#1502](https://github.com/heroku/heroku-buildpack-python/pull/1502) and [#1512](https://github.com/heroku/heroku-buildpack-python/pull/1512))
 
 ## [v239] - 2023-11-08
 
-- Drop support for Python 3.7. ([#1508](https://github.com/heroku/heroku-buildpack-python/pull/1508))
+- Dropped support for Python 3.7. ([#1508](https://github.com/heroku/heroku-buildpack-python/pull/1508))
 
 ## [v238] - 2023-11-06
 
@@ -35,7 +317,7 @@
 - Updated setuptools from 67.8.0 to 68.0.0. ([#1467](https://github.com/heroku/heroku-buildpack-python/pull/1467))
 - Updated wheel from 0.40.0 to 0.41.0. ([#1469](https://github.com/heroku/heroku-buildpack-python/pull/1469))
 - Updated pipenv from 2023.2.4 to 2023.7.23. ([#1468](https://github.com/heroku/heroku-buildpack-python/pull/1468) and [#1471](https://github.com/heroku/heroku-buildpack-python/pull/1471))
-- Update the Python 3.7 deprecation message to reflect that it has now reached end-of-life. ([#1460](https://github.com/heroku/heroku-buildpack-python/pull/1460))
+- Updated the Python 3.7 deprecation message to reflect that it has now reached end-of-life. ([#1460](https://github.com/heroku/heroku-buildpack-python/pull/1460))
 
 ## [v233] - 2023-06-07
 
@@ -54,7 +336,7 @@
 
 - Updated setuptools from 63.4.3 to 67.6.1. ([#1437](https://github.com/heroku/heroku-buildpack-python/pull/1437))
 - Updated wheel from 0.38.4 to 0.40.0. ([#1437](https://github.com/heroku/heroku-buildpack-python/pull/1437))
-- Raise curl connection timeout threshold from 5 to 10 seconds. ([#1439](https://github.com/heroku/heroku-buildpack-python/pull/1439))
+- Raised curl connection timeout threshold from 5 to 10 seconds. ([#1439](https://github.com/heroku/heroku-buildpack-python/pull/1439))
 
 ## [v230] - 2023-04-06
 
@@ -435,7 +717,7 @@
 
 ## v164 - 2020-02-20
 
-- Update requirements.txt builds to use Pip 20.0.2
+- Update requirements.txt builds to use pip 20.0.2
 - Download get-pip.py to tmpdir instead of root dir
 
 ## v163 - 2019-12-23
@@ -564,7 +846,7 @@ Default to 3.6.5, bugfixes.
 
 ## v133
 
-Fixes for Pip 10 release.
+Fixes for pip 10 release.
 
 ## v132
 
@@ -910,66 +1192,113 @@ Improved compatibility with multi and node.js buildpacks.
 
 ## v63 - 2015-10-08
 
-Updated Pip and Setuptools.
+Updated pip and Setuptools.
 
 - Setuptools updated to v18.3.2
-- Pip updated to v7.1.2
+- pip updated to v7.1.2
 
 ## v62 - 2015-08-07
 
-Updated Pip and Setuptools.
+Updated pip and Setuptools.
 
 - Setuptools updated to v18.1
-- Pip updated to v7.1.0
+- pip updated to v7.1.0
 
 ## v61 - 2015-06-30
 
-Updated Pip and Setuptools.
+Updated pip and Setuptools.
 
 - Setuptools updated to v18.0.1
-- Pip updated to v7.0.3
+- pip updated to v7.0.3
 
 ## v60 - 2015-05-27
 
-Default Python is now latest 2.7.10. Updated Pip and Distribute.
+Default Python is now latest 2.7.10. Updated pip and Distribute.
 
 - Default Python version is v2.7.10
 - Setuptools updated to v16.0
-- Pip updated to v7.0.1
+- pip updated to v7.0.1
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-python/compare/v239...HEAD
-[v239]: https://github.com/heroku/heroku-buildpack-python/compare/v238...v239
-[v238]: https://github.com/heroku/heroku-buildpack-python/compare/v237...v238
-[v237]: https://github.com/heroku/heroku-buildpack-python/compare/v236...v237
-[v236]: https://github.com/heroku/heroku-buildpack-python/compare/v235...v236
-[v235]: https://github.com/heroku/heroku-buildpack-python/compare/v234...v235
-[v234]: https://github.com/heroku/heroku-buildpack-python/compare/v233...v234
-[v233]: https://github.com/heroku/heroku-buildpack-python/compare/v232...v233
-[v232]: https://github.com/heroku/heroku-buildpack-python/compare/v231...v232
-[v231]: https://github.com/heroku/heroku-buildpack-python/compare/v230...v231
-[v230]: https://github.com/heroku/heroku-buildpack-python/compare/v229...v230
-[v229]: https://github.com/heroku/heroku-buildpack-python/compare/v228...v229
-[v228]: https://github.com/heroku/heroku-buildpack-python/compare/v227...v228
-[v227]: https://github.com/heroku/heroku-buildpack-python/compare/v226...v227
-[v226]: https://github.com/heroku/heroku-buildpack-python/compare/v225...v226
-[v225]: https://github.com/heroku/heroku-buildpack-python/compare/v224...v225
-[v224]: https://github.com/heroku/heroku-buildpack-python/compare/v223...v224
-[v223]: https://github.com/heroku/heroku-buildpack-python/compare/v222...v223
-[v222]: https://github.com/heroku/heroku-buildpack-python/compare/v221...v222
-[v221]: https://github.com/heroku/heroku-buildpack-python/compare/v220...v221
-[v220]: https://github.com/heroku/heroku-buildpack-python/compare/v219...v220
-[v219]: https://github.com/heroku/heroku-buildpack-python/compare/v218...v219
-[v218]: https://github.com/heroku/heroku-buildpack-python/compare/v217...v218
-[v217]: https://github.com/heroku/heroku-buildpack-python/compare/v216...v217
-[v216]: https://github.com/heroku/heroku-buildpack-python/compare/v215...v216
-[v215]: https://github.com/heroku/heroku-buildpack-python/compare/v214...v215
-[v214]: https://github.com/heroku/heroku-buildpack-python/compare/v213...v214
-[v213]: https://github.com/heroku/heroku-buildpack-python/compare/v212...v213
-[v212]: https://github.com/heroku/heroku-buildpack-python/compare/v211...v212
-[v211]: https://github.com/heroku/heroku-buildpack-python/compare/v210...v211
-[v210]: https://github.com/heroku/heroku-buildpack-python/compare/v209...v210
-[v209]: https://github.com/heroku/heroku-buildpack-python/compare/v208...v209
-[v208]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v207...v208
+[unreleased]: https://github.com/heroku/heroku-buildpack-python/compare/v286...main
+[v286]: https://github.com/heroku/heroku-buildpack-python/compare/v285...v286
+[v285]: https://github.com/heroku/heroku-buildpack-python/compare/v284...v285
+[v284]: https://github.com/heroku/heroku-buildpack-python/compare/v283...v284
+[v283]: https://github.com/heroku/heroku-buildpack-python/compare/v282...v283
+[v282]: https://github.com/heroku/heroku-buildpack-python/compare/v281...v282
+[v281]: https://github.com/heroku/heroku-buildpack-python/compare/v280...v281
+[v280]: https://github.com/heroku/heroku-buildpack-python/compare/v279...v280
+[v279]: https://github.com/heroku/heroku-buildpack-python/compare/v278...v279
+[v278]: https://github.com/heroku/heroku-buildpack-python/compare/v277...v278
+[v277]: https://github.com/heroku/heroku-buildpack-python/compare/v276...v277
+[v276]: https://github.com/heroku/heroku-buildpack-python/compare/v275...v276
+[v275]: https://github.com/heroku/heroku-buildpack-python/compare/v274...v275
+[v274]: https://github.com/heroku/heroku-buildpack-python/compare/v273...v274
+[v273]: https://github.com/heroku/heroku-buildpack-python/compare/v272...v273
+[v272]: https://github.com/heroku/heroku-buildpack-python/compare/v271...v272
+[v271]: https://github.com/heroku/heroku-buildpack-python/compare/v270...v271
+[v270]: https://github.com/heroku/heroku-buildpack-python/compare/v269...v270
+[v269]: https://github.com/heroku/heroku-buildpack-python/compare/v268...v269
+[v268]: https://github.com/heroku/heroku-buildpack-python/compare/v267...v268
+[v267]: https://github.com/heroku/heroku-buildpack-python/compare/v266...v267
+[v266]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v265...v266
+[v265]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v264...archive/v265
+[v264]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v263...archive/v264
+[v263]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v262...archive/v263
+[v262]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v261...archive/v262
+[v261]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v260...archive/v261
+[v260]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v259...archive/v260
+[v259]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v258...archive/v259
+[v258]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v257...archive/v258
+[v257]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v256...archive/v257
+[v256]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v255...archive/v256
+[v255]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v254...archive/v255
+[v254]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v253...archive/v254
+[v253]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v252...archive/v253
+[v252]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v251...archive/v252
+[v251]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v250...archive/v251
+[v250]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v249...archive/v250
+[v249]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v248...archive/v249
+[v248]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v247...archive/v248
+[v247]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v246...archive/v247
+[v246]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v245...archive/v246
+[v245]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v244...archive/v245
+[v244]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v243...archive/v244
+[v243]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v242...archive/v243
+[v242]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v241...archive/v242
+[v241]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v240...archive/v241
+[v240]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v239...archive/v240
+[v239]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v238...archive/v239
+[v238]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v237...archive/v238
+[v237]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v236...archive/v237
+[v236]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v235...archive/v236
+[v235]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v234...archive/v235
+[v234]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v233...archive/v234
+[v233]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v232...archive/v233
+[v232]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v231...archive/v232
+[v231]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v230...archive/v231
+[v230]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v229...archive/v230
+[v229]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v228...archive/v229
+[v228]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v227...archive/v228
+[v227]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v226...archive/v227
+[v226]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v225...archive/v226
+[v225]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v224...archive/v225
+[v224]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v223...archive/v224
+[v223]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v222...archive/v223
+[v222]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v221...archive/v222
+[v221]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v220...archive/v221
+[v220]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v219...archive/v220
+[v219]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v218...archive/v219
+[v218]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v217...archive/v218
+[v217]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v216...archive/v217
+[v216]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v215...archive/v216
+[v215]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v214...archive/v215
+[v214]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v213...archive/v214
+[v213]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v212...archive/v213
+[v212]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v211...archive/v212
+[v211]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v210...archive/v211
+[v210]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v209...archive/v210
+[v209]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v208...archive/v209
+[v208]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v207...archive/v208
 [v207]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v206...archive/v207
 [v206]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v205...archive/v206
 [v205]: https://github.com/heroku/heroku-buildpack-python/compare/archive/v204...archive/v205

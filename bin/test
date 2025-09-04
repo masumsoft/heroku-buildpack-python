@@ -4,7 +4,7 @@
 BIN_DIR=$(cd "$(dirname "$0")" || return; pwd) # absolute path
 
 # shellcheck source=bin/utils
-source "$BIN_DIR/utils"
+source "${BIN_DIR}/utils"
 
 # Locale support for Pipenv.
 export LC_ALL=C.UTF-8

@@ -32,12 +32,12 @@ RSpec.describe 'Heroku CI' do
                  PATH=/app/.heroku/python/bin::/usr/local/bin:/usr/local/bin:/usr/bin:/bin:/app/.sprettur/bin/
                  PKG_CONFIG_PATH=/app/.heroku/python/lib/pkg-config
                  PYTHONUNBUFFERED=1
+          -----> Saving cache
           -----> Inline app detected
           LANG=en_US.UTF-8
           LD_LIBRARY_PATH=/app/.heroku/python/lib
           LIBRARY_PATH=/app/.heroku/python/lib
           PATH=/app/.heroku/python/bin:/usr/local/bin:/usr/bin:/bin:/app/.sprettur/bin/
-          PYTHONHASHSEED=random
           PYTHONHOME=/app/.heroku/python
           PYTHONPATH=/app
           PYTHONUNBUFFERED=true
@@ -51,7 +51,6 @@ RSpec.describe 'Heroku CI' do
           LD_LIBRARY_PATH=/app/.heroku/python/lib
           LIBRARY_PATH=/app/.heroku/python/lib
           PATH=/app/.heroku/python/bin:/usr/local/bin:/usr/bin:/bin:/app/.sprettur/bin/:/app/.sprettur/bin/
-          PYTHONHASHSEED=random
           PYTHONHOME=/app/.heroku/python
           PYTHONPATH=/app
           PYTHONUNBUFFERED=true
@@ -87,7 +86,6 @@ RSpec.describe 'Heroku CI' do
           -----> Python app detected
           -----> Using Python #{DEFAULT_PYTHON_MAJOR_VERSION} specified in .python-version
           -----> Installing Python #{DEFAULT_PYTHON_FULL_VERSION}
-          -----> Installing pip #{PIP_VERSION}
           -----> Installing Pipenv #{PIPENV_VERSION}
           -----> Installing dependencies using 'pipenv install --deploy --dev'
                  Installing dependencies from Pipfile.lock \\(.+\\)...
@@ -103,18 +101,24 @@ RSpec.describe 'Heroku CI' do
                  LC_ALL=C.UTF-8
                  LD_LIBRARY_PATH=/app/.heroku/python/lib
                  LIBRARY_PATH=/app/.heroku/python/lib
-                 PATH=/app/.heroku/python/bin::/usr/local/bin:/usr/local/bin:/usr/bin:/bin:/app/.sprettur/bin/
+                 PATH=/app/.heroku/python/pipenv/bin:/app/.heroku/python/bin::/usr/local/bin:/usr/local/bin:/usr/bin:/bin:/app/.sprettur/bin/
+                 PIPENV_SYSTEM=1
+                 PIPENV_VERBOSITY=-1
                  PKG_CONFIG_PATH=/app/.heroku/python/lib/pkg-config
                  PYTHONUNBUFFERED=1
+                 VIRTUAL_ENV=/app/.heroku/python
+          -----> Saving cache
           -----> Inline app detected
           LANG=en_US.UTF-8
           LD_LIBRARY_PATH=/app/.heroku/python/lib
           LIBRARY_PATH=/app/.heroku/python/lib
-          PATH=/app/.heroku/python/bin:/usr/local/bin:/usr/bin:/bin:/app/.sprettur/bin/
-          PYTHONHASHSEED=random
+          PATH=/app/.heroku/python/bin:/app/.heroku/python/pipenv/bin:/usr/local/bin:/usr/bin:/bin:/app/.sprettur/bin/
+          PIPENV_SYSTEM=1
+          PIPENV_VERBOSITY=-1
           PYTHONHOME=/app/.heroku/python
           PYTHONPATH=/app
           PYTHONUNBUFFERED=true
+          VIRTUAL_ENV=/app/.heroku/python
           -----> No test-setup command provided. Skipping.
           -----> Running test command `./bin/print-env-vars.sh && pytest --version`...
           CI=true
@@ -124,11 +128,13 @@ RSpec.describe 'Heroku CI' do
           LANG=en_US.UTF-8
           LD_LIBRARY_PATH=/app/.heroku/python/lib
           LIBRARY_PATH=/app/.heroku/python/lib
-          PATH=/app/.heroku/python/bin:/usr/local/bin:/usr/bin:/bin:/app/.sprettur/bin/:/app/.sprettur/bin/
-          PYTHONHASHSEED=random
+          PATH=/app/.heroku/python/bin:/app/.heroku/python/pipenv/bin:/usr/local/bin:/usr/bin:/bin:/app/.sprettur/bin/:/app/.sprettur/bin/
+          PIPENV_SYSTEM=1
+          PIPENV_VERBOSITY=-1
           PYTHONHOME=/app/.heroku/python
           PYTHONPATH=/app
           PYTHONUNBUFFERED=true
+          VIRTUAL_ENV=/app/.heroku/python
           WEB_CONCURRENCY=5
           pytest .+
           -----> test command `./bin/print-env-vars.sh && pytest --version` completed successfully
@@ -140,8 +146,7 @@ RSpec.describe 'Heroku CI' do
           -----> Using Python #{DEFAULT_PYTHON_MAJOR_VERSION} specified in .python-version
           -----> Restoring cache
           -----> Using cached install of Python #{DEFAULT_PYTHON_FULL_VERSION}
-          -----> Installing pip #{PIP_VERSION}
-          -----> Installing Pipenv #{PIPENV_VERSION}
+          -----> Using cached Pipenv #{PIPENV_VERSION}
           -----> Installing dependencies using 'pipenv install --deploy --dev'
                  Installing dependencies from Pipfile.lock \\(.+\\)...
                  Installing dependencies from Pipfile.lock \\(.+\\)...
@@ -157,7 +162,8 @@ RSpec.describe 'Heroku CI' do
 
     it 'installs both normal and test dependencies and uses cache on subsequent runs' do
       app.run_ci do |test_run|
-        expect(clean_output(test_run.output)).to match(Regexp.new(<<~REGEX))
+        # The Poetry install log output order is non-deterministic, hence the regex.
+        expect(clean_output(test_run.output)).to match(Regexp.new(<<~REGEX, Regexp::MULTILINE))
           -----> Python app detected
           -----> Using Python #{DEFAULT_PYTHON_MAJOR_VERSION} specified in .python-version
           -----> Installing Python #{DEFAULT_PYTHON_FULL_VERSION}
@@ -167,11 +173,9 @@ RSpec.describe 'Heroku CI' do
                  
                  Package operations: 5 installs, 0 updates, 0 removals
                  
-                   - Installing iniconfig .+
-                   - Installing packaging .+
-                   - Installing pluggy .+
-                   - Installing pytest .+
-                   - Installing typing-extensions .+
+                   .+
+                   - Installing (pytest|typing-extensions) .+
+                   - Installing (pytest|typing-extensions) .+
           -----> Skipping Django collectstatic since the env var DISABLE_COLLECTSTATIC is set.
           -----> Running bin/post_compile hook
                  CI=true
@@ -188,6 +192,7 @@ RSpec.describe 'Heroku CI' do
                  POETRY_VIRTUALENVS_CREATE=false
                  POETRY_VIRTUALENVS_USE_POETRY_PYTHON=true
                  PYTHONUNBUFFERED=1
+          -----> Saving cache
           -----> Inline app detected
           LANG=en_US.UTF-8
           LD_LIBRARY_PATH=/app/.heroku/python/lib
@@ -195,7 +200,6 @@ RSpec.describe 'Heroku CI' do
           PATH=/app/.heroku/python/bin:/tmp/cache.+/.heroku/python-poetry/bin:/usr/local/bin:/usr/bin:/bin:/app/.sprettur/bin/
           POETRY_VIRTUALENVS_CREATE=false
           POETRY_VIRTUALENVS_USE_POETRY_PYTHON=true
-          PYTHONHASHSEED=random
           PYTHONHOME=/app/.heroku/python
           PYTHONPATH=/app
           PYTHONUNBUFFERED=true
@@ -209,7 +213,6 @@ RSpec.describe 'Heroku CI' do
           LD_LIBRARY_PATH=/app/.heroku/python/lib
           LIBRARY_PATH=/app/.heroku/python/lib
           PATH=/app/.heroku/python/bin:/usr/local/bin:/usr/bin:/bin:/app/.sprettur/bin/:/app/.sprettur/bin/
-          PYTHONHASHSEED=random
           PYTHONHOME=/app/.heroku/python
           PYTHONPATH=/app
           PYTHONUNBUFFERED=true
@@ -241,7 +244,8 @@ RSpec.describe 'Heroku CI' do
 
     it 'installs both normal and test dependencies and uses cache on subsequent runs' do
       app.run_ci do |test_run|
-        expect(clean_output(test_run.output)).to match(Regexp.new(<<~REGEX))
+        # The uv install log output order is non-deterministic, hence the regex.
+        expect(clean_output(test_run.output)).to match(Regexp.new(<<~REGEX, Regexp::MULTILINE))
           -----> Python app detected
           -----> Using Python #{DEFAULT_PYTHON_MAJOR_VERSION} specified in .python-version
           -----> Installing Python #{DEFAULT_PYTHON_FULL_VERSION}
@@ -251,11 +255,9 @@ RSpec.describe 'Heroku CI' do
                  Prepared 5 packages in .+s
                  Installed 5 packages in .+s
                  Bytecode compiled .+ files in .+s
-                  \\+ iniconfig==.+
-                  \\+ packaging==.+
-                  \\+ pluggy==.+
-                  \\+ pytest==.+
-                  \\+ typing-extensions==.+
+                  .+
+                  \\+ (pytest|typing-extensions)==.+
+                  \\+ (pytest|typing-extensions)==.+
           -----> Skipping Django collectstatic since the env var DISABLE_COLLECTSTATIC is set.
           -----> Running bin/post_compile hook
                  CI=true
@@ -273,12 +275,12 @@ RSpec.describe 'Heroku CI' do
                  UV_NO_MANAGED_PYTHON=1
                  UV_PROJECT_ENVIRONMENT=/app/.heroku/python
                  UV_PYTHON_DOWNLOADS=never
+          -----> Saving cache
           -----> Inline app detected
           LANG=en_US.UTF-8
           LD_LIBRARY_PATH=/app/.heroku/python/lib
           LIBRARY_PATH=/app/.heroku/python/lib
           PATH=/app/.heroku/python/bin:/tmp/cache.+/.heroku/python-uv:/usr/local/bin:/usr/bin:/bin:/app/.sprettur/bin/
-          PYTHONHASHSEED=random
           PYTHONHOME=/app/.heroku/python
           PYTHONPATH=/app
           PYTHONUNBUFFERED=true
@@ -295,7 +297,6 @@ RSpec.describe 'Heroku CI' do
           LD_LIBRARY_PATH=/app/.heroku/python/lib
           LIBRARY_PATH=/app/.heroku/python/lib
           PATH=/app/.heroku/python/bin:/usr/local/bin:/usr/bin:/bin:/app/.sprettur/bin/:/app/.sprettur/bin/
-          PYTHONHASHSEED=random
           PYTHONHOME=/app/.heroku/python
           PYTHONPATH=/app
           PYTHONUNBUFFERED=true

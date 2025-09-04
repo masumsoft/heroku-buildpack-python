@@ -20,12 +20,12 @@ RSpec.describe 'uv support' do
           remote:        Installed 1 package in .+s
           remote:        Bytecode compiled 1 file in .+s
           remote:         \\+ typing-extensions==4.13.2
+          remote: -----> Saving cache
           remote: -----> Inline app detected
           remote: LANG=en_US.UTF-8
           remote: LD_LIBRARY_PATH=/app/.heroku/python/lib
           remote: LIBRARY_PATH=/app/.heroku/python/lib
           remote: PATH=/app/.heroku/python/bin:/tmp/codon/tmp/cache/.heroku/python-uv:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-          remote: PYTHONHASHSEED=random
           remote: PYTHONHOME=/app/.heroku/python
           remote: PYTHONPATH=/app
           remote: PYTHONUNBUFFERED=true
@@ -41,12 +41,36 @@ RSpec.describe 'uv support' do
           remote:  '/app/.heroku/python/lib/python3.13/lib-dynload',
           remote:  '/app/.heroku/python/lib/python3.13/site-packages'\\]
           remote: 
+          remote: uv #{UV_VERSION}
           remote: Using Python #{DEFAULT_PYTHON_FULL_VERSION} environment at: /app/.heroku/python
           remote: Package           Version
           remote: ----------------- -------
           remote: typing-extensions 4.13.2
           remote: 
           remote: <module 'typing_extensions' from '/app/.heroku/python/lib/python3.13/site-packages/typing_extensions.py'>
+          remote: 
+          remote: {
+          remote:   "cache_restore_duration": [0-9.]+,
+          remote:   "cache_save_duration": [0-9.]+,
+          remote:   "cache_status": "empty",
+          remote:   "dependencies_install_duration": [0-9.]+,
+          remote:   "django_collectstatic_duration": [0-9.]+,
+          remote:   "nltk_downloader_duration": [0-9.]+,
+          remote:   "package_manager": "uv",
+          remote:   "package_manager_install_duration": [0-9.]+,
+          remote:   "post_compile_hook": false,
+          remote:   "pre_compile_hook": false,
+          remote:   "python_install_duration": [0-9.]+,
+          remote:   "python_version": "#{DEFAULT_PYTHON_FULL_VERSION}",
+          remote:   "python_version_major": "3.13",
+          remote:   "python_version_origin": ".python-version",
+          remote:   "python_version_outdated": false,
+          remote:   "python_version_pinned": false,
+          remote:   "python_version_requested": "3.13",
+          remote:   "setup_py_only": false,
+          remote:   "total_duration": [0-9.]+,
+          remote:   "uv_version": "#{UV_VERSION}"
+          remote: }
         REGEX
         app.commit!
         app.push!
@@ -59,6 +83,7 @@ RSpec.describe 'uv support' do
           remote: -----> Installing dependencies using 'uv sync --locked --no-default-groups'
           remote:        Resolved 7 packages in .+s
           remote:        Bytecode compiled 1 file in .+s
+          remote: -----> Saving cache
           remote: -----> Inline app detected
         REGEX
       end
@@ -88,6 +113,7 @@ RSpec.describe 'uv support' do
           remote:        Installed 1 package in .+s
           remote:        Bytecode compiled 1 file in .+s
           remote:         \\+ typing-extensions==4.13.2
+          remote: -----> Saving cache
           remote: -----> Discovering process types
         REGEX
       end
@@ -124,6 +150,7 @@ RSpec.describe 'uv support' do
           remote:        Running entrypoint for the pyproject.toml-based local package: Hello from pyproject.toml!
           remote:        Running entrypoint for the setup.py-based local package: Hello from setup.py!
           remote:        Running entrypoint for the VCS package: gunicorn \\(version 23.0.0\\)
+          remote: -----> Saving cache
           remote: -----> Inline app detected
           remote: __editable___local_package_pyproject_toml_0_0_1_finder.py:/tmp/build_.+/packages/local_package_pyproject_toml/local_package_pyproject_toml'}
           remote: __editable___local_package_setup_py_0_0_1_finder.py:/tmp/build_.+/packages/local_package_setup_py/local_package_setup_py'}
@@ -173,6 +200,7 @@ RSpec.describe 'uv support' do
           remote:        Running entrypoint for the pyproject.toml-based local package: Hello from pyproject.toml!
           remote:        Running entrypoint for the setup.py-based local package: Hello from setup.py!
           remote:        Running entrypoint for the VCS package: gunicorn \\(version 23.0.0\\)
+          remote: -----> Saving cache
           remote: -----> Inline app detected
           remote: __editable___local_package_pyproject_toml_0_0_1_finder.py:/tmp/build_.+/packages/local_package_pyproject_toml/local_package_pyproject_toml'}
           remote: __editable___local_package_setup_py_0_0_1_finder.py:/tmp/build_.+/packages/local_package_setup_py/local_package_setup_py'}
@@ -236,6 +264,7 @@ RSpec.describe 'uv support' do
           remote:        Installed 1 package in .+s
           remote:        Bytecode compiled 1 file in .+s
           remote:         \\+ typing-extensions==4.13.2
+          remote: -----> Saving cache
         REGEX
       end
     end
@@ -369,7 +398,8 @@ RSpec.describe 'uv support' do
         expect(clean_output(app.output)).to include(<<~OUTPUT)
           remote: -----> Installing dependencies using 'uv sync --locked --no-default-groups'
           remote:        Using CPython #{DEFAULT_PYTHON_FULL_VERSION} interpreter at: /app/.heroku/python/bin/python#{DEFAULT_PYTHON_MAJOR_VERSION}
-          remote:        error: The Python request from `.python-version` resolved to Python #{DEFAULT_PYTHON_FULL_VERSION}, which is incompatible with the project's Python requirement: `==3.12.*`. Use `uv python pin` to update the `.python-version` file to a compatible version.
+          remote:        error: The Python request from `.python-version` resolved to Python #{DEFAULT_PYTHON_FULL_VERSION}, which is incompatible with the project's Python requirement: `==3.12.*` (from `project.requires-python`)
+          remote:        Use `uv python pin` to update the `.python-version` file to a compatible version
           remote: 
           remote:  !     Error: Unable to install dependencies using uv.
           remote:  !     
@@ -391,7 +421,7 @@ RSpec.describe 'uv support' do
         expect(clean_output(app.output)).to match(Regexp.new(<<~REGEX))
           remote: -----> Installing dependencies using 'uv sync --locked --no-default-groups'
           remote:        Resolved 2 packages in .+s
-          remote:        error: The lockfile at `uv.lock` needs to be updated, but `--locked` was provided. To update the lockfile, run `uv lock`.
+          remote:        The lockfile at `uv.lock` needs to be updated, but `--locked` was provided. To update the lockfile, run `uv lock`.
           remote: 
           remote:  !     Error: Unable to install dependencies using uv.
           remote:  !     

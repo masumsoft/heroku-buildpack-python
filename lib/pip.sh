@@ -17,7 +17,7 @@ function pip::install_pip_setuptools_wheel() {
 	local bundled_pip_module_path
 	bundled_pip_module_path="$(utils::bundled_pip_module_path "${python_home}" "${python_major_version}")"
 
-	meta_set "pip_version" "${PIP_VERSION}"
+	build_data::set_string "pip_version" "${PIP_VERSION}"
 
 	local packages_to_install=(
 		"pip==${PIP_VERSION}"
@@ -32,8 +32,8 @@ function pip::install_pip_setuptools_wheel() {
 	# - Most of the Python ecosystem has stopped installing them for Python 3.12+ already.
 	# See the Python CNB's removal for more details: https://github.com/heroku/buildpacks-python/pull/243
 	if [[ "${python_major_version}" == +(3.9|3.10|3.11|3.12) ]]; then
-		meta_set "setuptools_version" "${SETUPTOOLS_VERSION}"
-		meta_set "wheel_version" "${WHEEL_VERSION}"
+		build_data::set_string "setuptools_version" "${SETUPTOOLS_VERSION}"
+		build_data::set_string "wheel_version" "${WHEEL_VERSION}"
 		packages_to_install+=(
 			"setuptools==${SETUPTOOLS_VERSION}"
 			"wheel==${WHEEL_VERSION}"
@@ -68,7 +68,7 @@ function pip::install_pip_setuptools_wheel() {
 			If that doesn't help, check the status of PyPI here:
 			https://status.python.org
 		EOF
-		meta_set "failure_reason" "install-package-manager::pip"
+		build_data::set_string "failure_reason" "install-package-manager::pip"
 		exit 1
 	fi
 }
@@ -108,6 +108,9 @@ function pip::install_dependencies() {
 
 	# TODO: Remove --disable-pip-version-check in favour of exporting PIP_DISABLE_PIP_VERSION_CHECK.
 	# The sed usage is to reduce the verbosity of output lines like:
+	# ...when using Python 3.10 and older:
+	# "Requirement already satisfied: typing-extensions==4.12.2 in ./.heroku/python/lib/python3.10/site-packages (from -r requirements.txt (line 2)) (4.12.2)"
+	# ...when using Python 3.11+:
 	# "Requirement already satisfied: typing-extensions==4.12.2 in /app/.heroku/python/lib/python3.13/site-packages (from -r requirements.txt (line 5)) (4.12.2)"
 	# shellcheck disable=SC2310 # This function is invoked in an 'if' condition so set -e will be disabled.
 	if ! {
@@ -119,7 +122,8 @@ function pip::install_dependencies() {
 			--progress-bar off \
 			--src='/app/.heroku/python/src' \
 			|& tee "${WARNINGS_LOG:?}" \
-			|& sed --unbuffered --expression 's# in /app/.heroku/python/lib/python.*/site-packages##' \
+			|& sed --unbuffered --regexp-extended \
+				--expression 's# in (/app|\.)/\.heroku/python/lib/python[0-9.]+/site-packages##' \
 			|& output::indent
 	}; then
 		# TODO: Overhaul warnings and combine them with error handling.
@@ -130,7 +134,7 @@ function pip::install_dependencies() {
 
 			See the log output above for more information.
 		EOF
-		meta_set "failure_reason" "install-dependencies::pip"
+		build_data::set_string "failure_reason" "install-dependencies::pip"
 		exit 1
 	fi
 }

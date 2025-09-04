@@ -14,8 +14,8 @@ RSpec.describe 'Package manager support' do
           remote:  !     Error: Couldn't find any supported Python package manager files.
           remote:  !     
           remote:  !     A Python app on Heroku must have either a 'requirements.txt',
-          remote:  !     'Pipfile', 'poetry.lock' or 'uv.lock' package manager file in
-          remote:  !     the root directory of its source code.
+          remote:  !     'Pipfile.lock', 'poetry.lock' or 'uv.lock' package manager file
+          remote:  !     in the root directory of its source code.
           remote:  !     
           remote:  !     Currently the root directory of your app contains:
           remote:  !     
@@ -65,6 +65,7 @@ RSpec.describe 'Package manager support' do
           remote:        .+
           remote:        Installing collected packages: six, test
           remote:        Successfully installed six-.+ test-0.0.0
+          remote: -----> Saving cache
         REGEX
       end
     end
@@ -115,10 +116,10 @@ RSpec.describe 'Package manager support' do
           remote: 
           remote: -----> Using Python #{DEFAULT_PYTHON_MAJOR_VERSION} specified in .python-version
           remote: -----> Installing Python #{DEFAULT_PYTHON_FULL_VERSION}
-          remote: -----> Installing pip #{PIP_VERSION}
           remote: -----> Installing Pipenv #{PIPENV_VERSION}
           remote: -----> Installing dependencies using 'pipenv install --deploy'
           remote:        Installing dependencies from Pipfile.lock \\(.+\\)...
+          remote: -----> Saving cache
         REGEX
       end
     end
@@ -147,6 +148,7 @@ RSpec.describe 'Package manager support' do
           remote:        Installed 1 package in .+s
           remote:        Bytecode compiled 1 file in .+s
           remote:         \\+ typing-extensions==4.13.2
+          remote: -----> Saving cache
           remote: -----> Discovering process types
         REGEX
       end

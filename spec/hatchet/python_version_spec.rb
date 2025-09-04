@@ -20,7 +20,6 @@ RSpec.shared_examples 'builds with the requested Python version' do |requested_v
           remote: -----> Using Python #{requested_version} specified in .python-version
           remote: -----> Installing Python #{resolved_version}
           remote: -----> Installing pip #{PIP_VERSION}, setuptools #{SETUPTOOLS_VERSION} and wheel #{WHEEL_VERSION}
-          remote: -----> Installing SQLite3
           remote: -----> Installing dependencies using 'pip install -r requirements.txt'
           remote:        Collecting typing-extensions==4.12.2 (from -r requirements.txt (line 2))
         OUTPUT
@@ -150,6 +149,7 @@ RSpec.describe 'Python version support' do
             remote: -----> Discarding cache since:
             remote:        - The Python version has changed from 3.12.7 to #{LATEST_PYTHON_3_12}
             remote:        - The pip version has changed from 24.0 to #{PIP_VERSION}
+            remote:        - The legacy SQLite3 headers and CLI binary need to be uninstalled
             remote: -----> Installing Python #{LATEST_PYTHON_3_12}
             remote: -----> Installing pip #{PIP_VERSION}, setuptools #{SETUPTOOLS_VERSION} and wheel #{WHEEL_VERSION}
           OUTPUT
@@ -275,7 +275,6 @@ RSpec.describe 'Python version support' do
           remote: 
           remote: -----> Installing Python #{LATEST_PYTHON_3_9}
           remote: -----> Installing pip #{PIP_VERSION}, setuptools #{SETUPTOOLS_VERSION} and wheel #{WHEEL_VERSION}
-          remote: -----> Installing SQLite3
           remote: -----> Installing dependencies using 'pip install -r requirements.txt'
           remote:        Collecting typing-extensions==4.12.2 (from -r requirements.txt (line 2))
         OUTPUT
@@ -504,6 +503,38 @@ RSpec.describe 'Python version support' do
           remote: 
           remote:  !     Push rejected, failed to compile Python app.
         REGEX
+      end
+    end
+  end
+
+  context 'when .python-version contains an outdated Python patch version' do
+    let(:app) { Hatchet::Runner.new('spec/fixtures/python_version_outdated') }
+
+    it 'warns there is a Python update available' do
+      app.deploy do |app|
+        expect(clean_output(app.output)).to include(<<~OUTPUT)
+          remote: -----> Python app detected
+          remote: -----> Using Python 3.13.2 specified in .python-version
+          remote: 
+          remote:  !     Warning: A Python patch update is available!
+          remote:  !     
+          remote:  !     Your app is using Python 3.13.2, however, there is a newer
+          remote:  !     patch release of Python 3.13 available: #{LATEST_PYTHON_3_13}
+          remote:  !     
+          remote:  !     It is important to always use the latest patch version of
+          remote:  !     Python to keep your app secure.
+          remote:  !     
+          remote:  !     Update your .python-version file to use the new version.
+          remote:  !     
+          remote:  !     We strongly recommend that you don't pin your app to an
+          remote:  !     exact Python version such as 3.13.2, and instead only specify
+          remote:  !     the major Python version of 3.13 in your .python-version file.
+          remote:  !     This will allow your app to receive the latest available Python
+          remote:  !     patch version automatically and prevent this warning.
+          remote: 
+          remote: -----> Installing Python 3.13.2
+          remote: -----> Installing pip #{PIP_VERSION}
+        OUTPUT
       end
     end
   end

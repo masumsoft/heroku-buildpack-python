@@ -9,7 +9,7 @@ RSpec.describe 'Poetry support' do
 
     it 'installs successfully using Poetry and on rebuilds uses the cache' do
       app.deploy do |app|
-        expect(clean_output(app.output)).to include(<<~OUTPUT)
+        expect(clean_output(app.output)).to match(Regexp.new(<<~REGEX))
           remote: -----> Python app detected
           remote: -----> Using Python #{DEFAULT_PYTHON_MAJOR_VERSION} specified in .python-version
           remote: -----> Installing Python #{DEFAULT_PYTHON_FULL_VERSION}
@@ -19,7 +19,8 @@ RSpec.describe 'Poetry support' do
           remote:        
           remote:        Package operations: 1 install, 0 updates, 0 removals
           remote:        
-          remote:          - Installing typing-extensions (4.12.2)
+          remote:          - Installing typing-extensions \\(4.12.2\\)
+          remote: -----> Saving cache
           remote: -----> Inline app detected
           remote: LANG=en_US.UTF-8
           remote: LD_LIBRARY_PATH=/app/.heroku/python/lib
@@ -27,23 +28,46 @@ RSpec.describe 'Poetry support' do
           remote: PATH=/app/.heroku/python/bin:/tmp/codon/tmp/cache/.heroku/python-poetry/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
           remote: POETRY_VIRTUALENVS_CREATE=false
           remote: POETRY_VIRTUALENVS_USE_POETRY_PYTHON=true
-          remote: PYTHONHASHSEED=random
           remote: PYTHONHOME=/app/.heroku/python
           remote: PYTHONPATH=/app
           remote: PYTHONUNBUFFERED=true
           remote: 
-          remote: ['',
+          remote: \\['',
           remote:  '/app',
           remote:  '/app/.heroku/python/lib/python313.zip',
           remote:  '/app/.heroku/python/lib/python3.13',
           remote:  '/app/.heroku/python/lib/python3.13/lib-dynload',
-          remote:  '/app/.heroku/python/lib/python3.13/site-packages']
+          remote:  '/app/.heroku/python/lib/python3.13/site-packages'\\]
           remote: 
+          remote: Poetry \\(version #{POETRY_VERSION}\\)
           remote: Skipping virtualenv creation, as specified in config file.
           remote: typing-extensions 4.12.2 Backported and Experimental Type Hints for Python ...
           remote: 
           remote: <module 'typing_extensions' from '/app/.heroku/python/lib/python3.13/site-packages/typing_extensions.py'>
-        OUTPUT
+          remote: 
+          remote: {
+          remote:   "cache_restore_duration": [0-9.]+,
+          remote:   "cache_save_duration": [0-9.]+,
+          remote:   "cache_status": "empty",
+          remote:   "dependencies_install_duration": [0-9.]+,
+          remote:   "django_collectstatic_duration": [0-9.]+,
+          remote:   "nltk_downloader_duration": [0-9.]+,
+          remote:   "package_manager": "poetry",
+          remote:   "package_manager_install_duration": [0-9.]+,
+          remote:   "poetry_version": "#{POETRY_VERSION}",
+          remote:   "post_compile_hook": false,
+          remote:   "pre_compile_hook": false,
+          remote:   "python_install_duration": [0-9.]+,
+          remote:   "python_version": "#{DEFAULT_PYTHON_FULL_VERSION}",
+          remote:   "python_version_major": "3.13",
+          remote:   "python_version_origin": ".python-version",
+          remote:   "python_version_outdated": false,
+          remote:   "python_version_pinned": false,
+          remote:   "python_version_requested": "3.13",
+          remote:   "setup_py_only": false,
+          remote:   "total_duration": [0-9.]+
+          remote: }
+        REGEX
         app.commit!
         app.push!
         expect(clean_output(app.output)).to include(<<~OUTPUT)
@@ -56,6 +80,7 @@ RSpec.describe 'Poetry support' do
           remote:        Installing dependencies from lock file
           remote:        
           remote:        No dependencies to install or update
+          remote: -----> Saving cache
           remote: -----> Inline app detected
         OUTPUT
       end
@@ -85,6 +110,7 @@ RSpec.describe 'Poetry support' do
           remote:        Package operations: 1 install, 0 updates, 0 removals
           remote:        
           remote:          - Installing typing-extensions (4.12.2)
+          remote: -----> Saving cache
           remote: -----> Discovering process types
         OUTPUT
       end
@@ -115,17 +141,20 @@ RSpec.describe 'Poetry support' do
           remote:        __editable___local_package_setup_py_0_0_1_finder.py:/tmp/build_.+/packages/local_package_setup_py/local_package_setup_py'}
           remote:        poetry_editable.pth:/tmp/build_.+
           remote:        
-          remote:        Running entrypoint for the pyproject.toml-based local package: Hello pyproject.toml!
-          remote:        Running entrypoint for the setup.py-based local package: Hello setup.py!
+          remote:        Running entrypoint for the current package: Hello from poetry-editable!
+          remote:        Running entrypoint for the pyproject.toml-based local package: Hello from pyproject.toml!
+          remote:        Running entrypoint for the setup.py-based local package: Hello from setup.py!
           remote:        Running entrypoint for the VCS package: gunicorn \\(version 23.0.0\\)
+          remote: -----> Saving cache
           remote: -----> Inline app detected
           remote: __editable___gunicorn_23_0_0_finder.py:/app/.heroku/python/src/gunicorn/gunicorn'}
           remote: __editable___local_package_pyproject_toml_0_0_1_finder.py:/tmp/build_.+/packages/local_package_pyproject_toml/local_package_pyproject_toml'}
           remote: __editable___local_package_setup_py_0_0_1_finder.py:/tmp/build_.+/packages/local_package_setup_py/local_package_setup_py'}
           remote: poetry_editable.pth:/tmp/build_.+
           remote: 
-          remote: Running entrypoint for the pyproject.toml-based local package: Hello pyproject.toml!
-          remote: Running entrypoint for the setup.py-based local package: Hello setup.py!
+          remote: Running entrypoint for the current package: Hello from poetry-editable!
+          remote: Running entrypoint for the pyproject.toml-based local package: Hello from pyproject.toml!
+          remote: Running entrypoint for the setup.py-based local package: Hello from setup.py!
           remote: Running entrypoint for the VCS package: gunicorn \\(version 23.0.0\\)
         REGEX
 
@@ -136,8 +165,9 @@ RSpec.describe 'Poetry support' do
           __editable___local_package_setup_py_0_0_1_finder.py:/app/packages/local_package_setup_py/local_package_setup_py'}
           poetry_editable.pth:/app
 
-          Running entrypoint for the pyproject.toml-based local package: Hello pyproject.toml!
-          Running entrypoint for the setup.py-based local package: Hello setup.py!
+          Running entrypoint for the current package: Hello from poetry-editable!
+          Running entrypoint for the pyproject.toml-based local package: Hello from pyproject.toml!
+          Running entrypoint for the setup.py-based local package: Hello from setup.py!
           Running entrypoint for the VCS package: gunicorn (version 23.0.0)
         OUTPUT
 
@@ -161,17 +191,20 @@ RSpec.describe 'Poetry support' do
           remote:        __editable___local_package_setup_py_0_0_1_finder.py:/tmp/build_.+/packages/local_package_setup_py/local_package_setup_py'}
           remote:        poetry_editable.pth:/tmp/build_.+
           remote:        
-          remote:        Running entrypoint for the pyproject.toml-based local package: Hello pyproject.toml!
-          remote:        Running entrypoint for the setup.py-based local package: Hello setup.py!
+          remote:        Running entrypoint for the current package: Hello from poetry-editable!
+          remote:        Running entrypoint for the pyproject.toml-based local package: Hello from pyproject.toml!
+          remote:        Running entrypoint for the setup.py-based local package: Hello from setup.py!
           remote:        Running entrypoint for the VCS package: gunicorn \\(version 23.0.0\\)
+          remote: -----> Saving cache
           remote: -----> Inline app detected
           remote: __editable___gunicorn_23_0_0_finder.py:/app/.heroku/python/src/gunicorn/gunicorn'}
           remote: __editable___local_package_pyproject_toml_0_0_1_finder.py:/tmp/build_.+/packages/local_package_pyproject_toml/local_package_pyproject_toml'}
           remote: __editable___local_package_setup_py_0_0_1_finder.py:/tmp/build_.+/packages/local_package_setup_py/local_package_setup_py'}
           remote: poetry_editable.pth:/tmp/build_.+
           remote: 
-          remote: Running entrypoint for the pyproject.toml-based local package: Hello pyproject.toml!
-          remote: Running entrypoint for the setup.py-based local package: Hello setup.py!
+          remote: Running entrypoint for the current package: Hello from poetry-editable!
+          remote: Running entrypoint for the pyproject.toml-based local package: Hello from pyproject.toml!
+          remote: Running entrypoint for the setup.py-based local package: Hello from setup.py!
           remote: Running entrypoint for the VCS package: gunicorn \\(version 23.0.0\\)
         REGEX
       end
@@ -231,6 +264,23 @@ RSpec.describe 'Poetry support' do
           remote:        Package operations: 1 install, 0 updates, 0 removals
           remote:        
           remote:          - Installing typing-extensions (4.12.2)
+          remote: -----> Saving cache
+        OUTPUT
+      end
+    end
+  end
+
+  # This tests that Poetry doesn't download its own Python or fall back to system Python
+  # if the Python version in pyproject.toml doesn't match that in .python-version.
+  context 'when requires-python in pyproject.toml is incompatible with .python-version',
+          skip: 'this is currently broken upstream: https://github.com/python-poetry/poetry/issues/10226' do
+    let(:app) { Hatchet::Runner.new('spec/fixtures/poetry_mismatched_python_version', allow_failure: true) }
+
+    it 'fails the build' do
+      app.deploy do |app|
+        expect(clean_output(app.output)).to include(<<~OUTPUT)
+          remote: -----> Installing dependencies using 'poetry sync --only main'
+          remote:        <TODO whatever error message Poetry displays if they fix their bug>
         OUTPUT
       end
     end

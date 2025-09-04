@@ -6,6 +6,7 @@
 set -euo pipefail
 
 BUILD_DIR="${1}"
+CACHE_DIR="${2}"
 
 cd "${BUILD_DIR}"
 
@@ -15,9 +16,13 @@ echo
 python -c 'import pprint, sys; pprint.pp(sys.path)'
 echo
 
+poetry --version
 # The show command also lists dependencies that are in optional groups in pyproject.toml
 # but that aren't actually installed, for which the only option is to filter out by hand.
 poetry show | grep -v ' (!) '
 echo
 
 python -c 'import typing_extensions; print(typing_extensions)'
+echo
+
+jq --sort-keys '.' "${CACHE_DIR}/build-data/python.json"
